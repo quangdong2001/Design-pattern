@@ -1,55 +1,58 @@
 #include <iostream>
-class Shape
-{   
-public:
-    Shape() = default;
-    virtual ~Shape() = default;
-protected:
-    virtual void drawShape() = 0;
-};
-
-class Rectangle : public Shape
+#include <mutex>
+namespace FactoryMethod
 {
-public:
-    void drawShape() override
+    class Shape
+    {   
+    public:
+        Shape() = default;
+        virtual ~Shape() = default;
+    protected:
+        virtual void drawShape() = 0;
+    };
+
+    class Rectangle : public Shape
     {
-        std::cout << "Drawing rectangle~" << std::endl;
-    }
-};
+    public:
+        void drawShape() override;
+    };
 
-class Circle : public Shape 
-{
-public:
-    void drawShape() override
+    class Circle : public Shape 
     {
-        std::cout << "Drawing circle~" << std::endl;
-    }
-};
+    public:
+        void drawShape() override;
+    };
 
-class ShapeFactory
-{
-public:
-    virtual Shape* crateShape() = 0;
-    virtual ~ShapeFactory() = default;
-};
-
-class RectangleFactory : public ShapeFactory
-{
-    Shape* createShape()
+    class ShapeFactory
     {
-        return new Rectangle;
-    }
-    ~RectangleFactory() = default;
-};
+    public:
+        virtual Shape* crateShape() = 0;
+        virtual ~ShapeFactory() = default;
+    };
 
-class CircleFactory : public ShapeFactory
-{
-    Shape* createShape()
+    class RectangleFactory : public ShapeFactory
     {
-        return new Circle;
-    }
-    ~CircleFactory() = default;
-};
+    private:
+        RectangleFactory() = default;
+        ~RectangleFactory() = default;
+    public:
+        Shape* createShape();
+    private:
+        static RectangleFactory* instance;
+        static std::mutex mtx;
+    };
 
+    class CircleFactory : public ShapeFactory
+    {
+    private:
+        CircleFactory () = default;
+        ~CircleFactory() = default;
+    public:
+        Shape* createShape();
+    private:
+        static CircleFactory* instance;
+        static std::mutex mtx;
+    };
+} // namespace FactoryMethod
 
 
